@@ -11,8 +11,8 @@ class Consulta {
     #motivo;
     #status;
 
-    constructor({
-        id_consulta = null,
+    constructor(
+        id_consulta,
         id_paciente,
         id_tipo_consulta,
         id_usuario_agendador,
@@ -21,7 +21,7 @@ class Consulta {
         data_agendamento,
         motivo,
         status
-    }) {
+    ) {
         this.#id_consulta = id_consulta;
         this.#id_paciente = id_paciente;
         this.#id_tipo_consulta = id_tipo_consulta;
@@ -116,7 +116,7 @@ class Consulta {
     }
 
     async inserir() {
-        return await ConsultaDAO.inserir(this);
+        return await ConsultaDAO.inserir(this.toJSON());
     }
 
     async atualizar() {
@@ -128,11 +128,17 @@ class Consulta {
     }
 
     static async buscarPorId(id) {
-        return await ConsultaDAO.buscar(id);
+        const [row] = await ConsultaDAO.buscar(id);
+        if (!row)
+            return null;
+
+        const consulta = new Consulta(row.id_consulta, row.id_paciente, row.id_tipo_consulta, row.id_usuario_agendador, row.id_usuario_medico, row.data_hora_consulta, row.data_agendamento, row.motivo, row.status);
+        return consulta;
     }
 
     static async listar() {
-        return await ConsultaDAO.buscar();
+        const rows = await ConsultaDAO.buscar();
+        return rows.map(row => new Consulta(row.id_consulta, row.id_paciente, row.id_tipo_consulta, row.id_usuario_agendador, row.id_usuario_medico, row.data_hora_consulta, row.data_agendamento, row.motivo, row.status));
     }
 }
 

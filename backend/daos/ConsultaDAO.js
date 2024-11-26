@@ -11,7 +11,7 @@ class ConsultaDAO {
             data_agendamento,
             motivo,
             status
-        } = dados;
+        }  = dados;
 
         const sql = `
             INSERT INTO consultas (
@@ -35,13 +35,12 @@ class ConsultaDAO {
             motivo,
             status
         ]);
-
-        return result.insertId; // Retorna o ID da nova consulta inserida
+        return result.insertId; 
     }
 
-    // Atualizar uma consulta existente
-    async atualizar(id_consulta, dados) {
+    async atualizar(dados) {
         const {
+            id_consulta,
             id_paciente,
             id_tipo_consulta,
             id_usuario_agendador,
@@ -77,17 +76,15 @@ class ConsultaDAO {
             id_consulta
         ]);
 
-        return result.affectedRows; // Retorna a quantidade de registros atualizados
+        return result.affectedRows;
     }
 
-    // Excluir uma consulta
     async excluir(id_consulta) {
         const sql = 'DELETE FROM consultas WHERE id_consulta = ?';
         const [result] = await db.execute(sql, [id_consulta]);
-        return result.affectedRows; // Retorna a quantidade de registros excluídos
+        return result.affectedRows; 
     }
 
-    // Buscar lista ou consulta única
     async buscar(id_consulta = null) {
         let sql, params;
         if (id_consulta) {
@@ -98,7 +95,7 @@ class ConsultaDAO {
             params = [];
         }
         const [rows] = await db.execute(sql, params);
-        return rows; // Retorna os registros encontrados
+        return rows; 
     }
 }
 

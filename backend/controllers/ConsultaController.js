@@ -5,13 +5,17 @@ class ConsultaController {
     async inserir(req, res) {
         try {
             const {id_consulta, id_paciente, id_tipo_consulta, id_usuario_agendador, id_usuario_medico, data_hora_consulta, data_agendamento, motivo, status} = req.body;
-            const consultaDados = {id_consulta, id_paciente, id_tipo_consulta, id_usuario_agendador, id_usuario_medico, data_hora_consulta, data_agendamento, motivo, status};
-            // consulta = new Consulta(consultaDados);
-            const consulta = new Consulta(consultaDados);
-            consulta = await consulta.inserir(consultaDados);
+
+            if(!id_paciente || !id_tipo_consulta || !id_usuario_agendador || !id_usuario_medico || !data_hora_consulta || !data_agendamento || !motivo || !status)
+                return res.status(400).json({ message: 'Campos obrigatórios não preenchidos' });
+
+            const consulta = new Consulta(0, id_paciente, id_tipo_consulta, id_usuario_agendador, id_usuario_medico, data_hora_consulta, data_agendamento, motivo, status);
+
+            const resultado = await consulta.inserir();
+
             res.status(201).json({
                 message: 'Consulta inserida com sucesso',
-                data: consulta.json()
+                id: resultado
             });
         } catch (error) {
             res.status(500).json({ 
@@ -24,12 +28,16 @@ class ConsultaController {
     async atualizar(req, res) {
         try{
             const{id_consulta, id_paciente, id_tipo_consulta, id_usuario_agendador, id_usuario_medico, data_hora_consulta, data_agendamento, motivo, status} = req.body;
-            const consultaDados = {id_consulta, id_paciente, id_tipo_consulta, id_usuario_agendador, id_usuario_medico, data_hora_consulta, data_agendamento, motivo, status};
-            const consulta = new Consulta(consultaDados);
-            consulta = await consulta.atualizar(consultaDados);
+            
+            if(!id_paciente || !id_tipo_consulta || !id_usuario_agendador || !id_usuario_medico || !data_hora_consulta || !data_agendamento || !motivo || !status)
+                return res.status(400).json({ message: 'Campos obrigatórios não preenchidos' });
+
+            const consulta = new Consulta(id_consulta, id_paciente, id_tipo_consulta, id_usuario_agendador, id_usuario_medico, data_hora_consulta, data_agendamento, motivo, status);
+
+            const resultado = await consulta.atualizar();
             res.status(200).json({
                 message: 'Consulta atualizada com sucesso',
-                data: consulta.json()
+                afetados: resultado
             });
         }
         catch(error){
@@ -57,7 +65,10 @@ class ConsultaController {
         try {
             const { id } = req.params;
             const consulta = await Consulta.buscarPorId(id);
-            res.status(200).json(consulta.json());
+            if(consulta)
+                res.status(200).json(consulta.toJSON());
+            else
+                res.status(404).json({ message: 'Consulta não encontrada' });
         } catch (error) {
             res.status(500).json({ 
                 message: 'Erro ao buscar consulta',
@@ -69,7 +80,7 @@ class ConsultaController {
     async listar(req, res) {
         try {
             const consultas = await Consulta.listar();
-            res.status(200).json(consultas.map((consulta) => consulta.json()));
+            res.status(200).json(consultas.map(consulta => consulta.toJSON()));
         } catch (error) {
             res.status(500).json({ 
                 message: 'Erro ao listar consultas',

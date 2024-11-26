@@ -9,20 +9,28 @@ import FormularioPacientes from './pages/pacientes/FormularioPacientes';
 import Consultas from './pages/consultas/Consultas';
 import FormularioConsultas from './pages/consultas/FormularioConsultas';
 import Home from './pages/Home';
+import ConsultaServico from './services/ConsultaServico';
+const consultaServico = new ConsultaServico();
 
 const App = () => {
+
   const [funcionarios, setFuncionarios] = useState([]);
   const [pacientes, setPacientes] = useState([]);
   const [consultas, setConsultas] = useState([]);
 
   // Carregar dados do LocalStorage ao iniciar
   useEffect(() => {
+    const carregaConsultas = async () => {
+      const consultas = await consultaServico.getConsultas();
+      setConsultas(consultas);
+    }
+
+    carregaConsultas();
+
     const funcionariosStorage = JSON.parse(localStorage.getItem('funcionarios')) || [];
     const pacientesStorage = JSON.parse(localStorage.getItem('pacientes')) || [];
-    const consultasStorage = JSON.parse(localStorage.getItem('consultas')) || [];
     setFuncionarios(funcionariosStorage);
     setPacientes(pacientesStorage);
-    setConsultas(consultasStorage);
   }, []);
 
   // Função para sincronizar dados no LocalStorage
@@ -83,7 +91,5 @@ const App = () => {
     </Router>
   );
 };
-
-
 
 export default App;

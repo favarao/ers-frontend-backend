@@ -116,7 +116,7 @@ class Consulta {
     }
 
     async inserir() {
-        return await ConsultaDAO.inserir(this.toJSON());
+        return await ConsultaDAO.inserir(this);
     }
 
     async atualizar() {

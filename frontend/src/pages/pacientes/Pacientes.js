@@ -6,7 +6,7 @@ const Pacientes = ({ pacientes, setPacientes, sincronizarStorage }) => {
   const excluirPaciente = (id) => {
     const novosPacientes = pacientes.filter(paciente => paciente.id_paciente !== id);
     setPacientes(novosPacientes);
-    sincronizarStorage('pacientes', novosPacientes); // Sincroniza com o LocalStorage
+    // sincronizarStorage('pacientes', novosPacientes); // Sincroniza com o LocalStorage
   };
 
   return (

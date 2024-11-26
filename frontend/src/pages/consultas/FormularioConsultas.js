@@ -3,29 +3,52 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Form, Button, Alert } from 'react-bootstrap';
 import { useEffect } from 'react';
 import InputMask from 'react-input-mask'
+import ConsultaServico from '../../services/ConsultaServico';
+const consultaServico = new ConsultaServico();
 
-const FormularioConsultas = ({ consultas, pacientes, funcionarios, setConsultas, sincronizarStorage }) => {
+const vazio = {
+  id_consulta: 0,
+  id_paciente: '',
+  id_usuario_medico: '',
+  id_tipo_consulta: 1,
+  id_usuario_agendador: 1,
+  data_hora_consulta: '',
+  data_agendamento: '',
+  motivo: '',
+  status: 'Agendada',
+};
+
+const FormularioConsultas = ({ consultas, pacientes, funcionarios, setConsultas }) => {
   const { id } = useParams();
-  const navigate = useNavigate();
 
-  const [form, setForm] = useState({
-    id_consulta: '',
-    id_paciente: '',
-    id_usuario_medico: '',
-    data_hora_consulta: '',
-    data_agendamento: '',
-    motivo: '',
-    status: 'Agendada'
-  });
+  const [form, setForm] = useState(vazio);
 
   useEffect(() => {
-    if (id) {
-      const consultaExistente = consultas.find(consulta => consulta.id_consulta === parseInt(id));
-      if (consultaExistente) {
-        setForm(consultaExistente);
+    const carregarConsulta = async () => {
+      if (id) {
+        try {
+          const consulta = await consultaServico.getConsulta(id);
+          if (consulta) {
+            
+            consulta.data_hora_consulta = consulta.data_hora_consulta.slice(0, 16);
+            consulta.data_agendamento = new Date(consulta.data_agendamento).toLocaleDateString('pt-BR');
+
+            setForm(consulta);
+          } else {
+            console.warn('Consulta não encontrada para o ID:', id);
+          }
+        } catch (error) {
+          console.error('Erro ao buscar consulta:', error);
+        }
       }
-    }
-  }, [id, consultas]);
+    };
+
+    carregarConsulta();
+  }, [id]);
+  
+  const navigate = useNavigate();
+
+
 
   const [error, setError] = useState('');
 
@@ -35,18 +58,13 @@ const FormularioConsultas = ({ consultas, pacientes, funcionarios, setConsultas,
     setForm({ ...form, [name]: value });
   };
 
-  // Função para validar o formulário
+  //Função para validar o formulário
   const validateForm = () => {
     if (!form.id_paciente || !form.id_usuario_medico || !form.data_hora_consulta || !form.data_agendamento || !form.motivo) {
       setError('Todos os campos obrigatórios devem ser preenchidos!');
       return false;
     }
-    const dataAgendamentoParts = form.data_agendamento.split('/');
-    const dataAgendamentoDate = new Date(`${dataAgendamentoParts[2]}-${dataAgendamentoParts[1]}-${dataAgendamentoParts[0]}`);
-    if (isNaN(dataAgendamentoDate.getTime())) {
-      setError('Data de agendamento inválida!');
-      return false;
-    }
+    form.data_agendamento = form.data_agendamento.split('/').reverse().join('-');
     setError('');
     return true;
   };
@@ -58,26 +76,17 @@ const FormularioConsultas = ({ consultas, pacientes, funcionarios, setConsultas,
     // Validando o formulário antes de submeter
     if (!validateForm()) return;
 
-    if (form.id_consulta!== '') {
-      const index = consultas.findIndex(consulta => consulta.id_consulta === form.id_consulta);
-      if (index !== -1) {
-        consultas[index] = form;
-        setConsultas([...consultas]);
-        sincronizarStorage('consultas', consultas);
-      }
+    if (form.id_consulta!== 0) {
+      consultaServico.updateConsulta(form).then(() => {
+        consultaServico.getConsultas().then(consultas => setConsultas(consultas));
+      });
     }
     else
     {
-      form.id_consulta = consultas.length+1;
-      const novaConsulta = {
-        ...form
-      };
-
-
-    const novasConsultas = [...consultas, novaConsulta];
-    setConsultas(novasConsultas);
-    sincronizarStorage('consultas', novasConsultas); // Sincroniza com o LocalStorage
-  }
+      consultaServico.createConsulta(form).then(() => {
+        consultaServico.getConsultas().then(consultas => setConsultas(consultas));
+      });
+    }
 
     navigate('/consultas');
   };
@@ -90,6 +99,16 @@ const FormularioConsultas = ({ consultas, pacientes, funcionarios, setConsultas,
           type="hidden"
           name="id_consulta"
           value={form.id_consulta}
+        />
+        <Form.Control
+          type="hidden"
+          name="id_tipo_consulta"
+          value={form.id_tipo_consulta}
+        />
+        <Form.Control
+          type="hidden"
+          name="id_usuario_agendador"
+          value={form.id_usuario_agendador}
         />
         <Form.Group className="mb-3" controlId="formPaciente">
           <Form.Label>Paciente</Form.Label>

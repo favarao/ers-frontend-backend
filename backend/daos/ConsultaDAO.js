@@ -12,7 +12,6 @@ class ConsultaDAO {
             motivo,
             status
         }  = dados;
-
         const sql = `
             INSERT INTO consultas (
                 id_paciente,

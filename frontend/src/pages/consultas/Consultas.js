@@ -1,12 +1,13 @@
 import React from 'react';
 import { Table, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import ConsultaServico from '../../services/ConsultaServico';
+const consultaServico = new ConsultaServico();
 
-const Consultas = ({ consultas, pacientes, funcionarios, setConsultas, sincronizarStorage }) => {
+const Consultas = ({ consultas, pacientes, funcionarios, setConsultas}) => {
   const excluirConsulta = (id) => {
-    const novasConsultas = consultas.filter(consulta => consulta.id_consulta !== id);
-    setConsultas(novasConsultas);
-    sincronizarStorage('consultas', novasConsultas); // Sincroniza com o LocalStorage
+    consultaServico.deleteConsulta(id).then(() => {
+      consultaServico.getConsultas().then(consultas => setConsultas(consultas))});
   };
   
   return (

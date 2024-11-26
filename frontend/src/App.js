@@ -17,26 +17,18 @@ const App = () => {
   const [funcionarios, setFuncionarios] = useState([]);
   const [pacientes, setPacientes] = useState([]);
   const [consultas, setConsultas] = useState([]);
-
+  const carregaConsultas = async () => {
+    const consultas = await consultaServico.getConsultas();
+    setConsultas(consultas);
+  }
   // Carregar dados do LocalStorage ao iniciar
   useEffect(() => {
-    const carregaConsultas = async () => {
-      const consultas = await consultaServico.getConsultas();
-      setConsultas(consultas);
-    }
-
     carregaConsultas();
-
     const funcionariosStorage = JSON.parse(localStorage.getItem('funcionarios')) || [];
     const pacientesStorage = JSON.parse(localStorage.getItem('pacientes')) || [];
     setFuncionarios(funcionariosStorage);
     setPacientes(pacientesStorage);
   }, []);
-
-  // Função para sincronizar dados no LocalStorage
-  const sincronizarStorage = (chave, dados) => {
-    localStorage.setItem(chave, JSON.stringify(dados));
-  };
 
   return (
     <Router>
@@ -48,43 +40,43 @@ const App = () => {
 
           <Route
             path="/funcionarios"
-            element={<Funcionarios funcionarios={funcionarios} setFuncionarios={setFuncionarios} sincronizarStorage={sincronizarStorage} />}
+            element={<Funcionarios funcionarios={funcionarios} setFuncionarios={setFuncionarios}/>}
           />
           <Route
             path="/funcionarios/formulario/:id"
-            element={<FormularioFuncionarios funcionarios={funcionarios} setFuncionarios={setFuncionarios} sincronizarStorage={sincronizarStorage} />}
+            element={<FormularioFuncionarios funcionarios={funcionarios} setFuncionarios={setFuncionarios}  />}
           />
           
           <Route
             path="/funcionarios/formulario"
-            element={<FormularioFuncionarios funcionarios={funcionarios} setFuncionarios={setFuncionarios} sincronizarStorage={sincronizarStorage} />}
+            element={<FormularioFuncionarios funcionarios={funcionarios} setFuncionarios={setFuncionarios} />}
           />
           <Route
             path="/pacientes"
-            element={<Pacientes pacientes={pacientes} setPacientes={setPacientes} sincronizarStorage={sincronizarStorage} />}
+            element={<Pacientes pacientes={pacientes} setPacientes={setPacientes}/>}
           />
           <Route
             path="/pacientes/formulario"
-            element={<FormularioPacientes pacientes={pacientes} setPacientes={setPacientes} sincronizarStorage={sincronizarStorage} />}
+            element={<FormularioPacientes pacientes={pacientes} setPacientes={setPacientes} />}
           />
           <Route
             path="/pacientes/formulario/:id"
-            element={<FormularioPacientes pacientes={pacientes} setPacientes={setPacientes} sincronizarStorage={sincronizarStorage} />}
+            element={<FormularioPacientes pacientes={pacientes} setPacientes={setPacientes} />}
           />
 
           
           <Route
             path="/consultas"
-            element={<Consultas consultas={consultas} pacientes={pacientes} funcionarios={funcionarios} setConsultas={setConsultas} sincronizarStorage={sincronizarStorage} />}
+            element={<Consultas consultas={consultas} pacientes={pacientes} funcionarios={funcionarios} setConsultas={setConsultas} carregaConsultas={carregaConsultas} />}
           />
           <Route
             path="/consultas/formulario"
-            element={<FormularioConsultas consultas={consultas} pacientes={pacientes} funcionarios={funcionarios} setConsultas={setConsultas} sincronizarStorage={sincronizarStorage} />}
+            element={<FormularioConsultas consultas={consultas} pacientes={pacientes} funcionarios={funcionarios} setConsultas={setConsultas} />}
           />
 
           <Route
             path="/consultas/formulario/:id"
-            element={<FormularioConsultas consultas={consultas}  pacientes={pacientes} funcionarios={funcionarios} setConsultas={setConsultas} sincronizarStorage={sincronizarStorage} />}
+            element={<FormularioConsultas consultas={consultas}  pacientes={pacientes} funcionarios={funcionarios} setConsultas={setConsultas} />}
           />
         </Routes>
       </Container>

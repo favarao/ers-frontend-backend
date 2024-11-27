@@ -65,6 +65,7 @@ const FormularioConsultas = ({ consultas, pacientes, funcionarios, setConsultas 
       return false;
     }
     form.data_agendamento = form.data_agendamento.split('/').reverse().join('-');
+    form.id_usuario_agendador = form.id_usuario_medico;
     setError('');
     return true;
   };
@@ -108,7 +109,7 @@ const FormularioConsultas = ({ consultas, pacientes, funcionarios, setConsultas 
         <Form.Control
           type="hidden"
           name="id_usuario_agendador"
-          value={form.id_usuario_agendador}
+          value={form.id_usuario_medico}
         />
         <Form.Group className="mb-3" controlId="formPaciente">
           <Form.Label>Paciente</Form.Label>
@@ -118,11 +119,7 @@ const FormularioConsultas = ({ consultas, pacientes, funcionarios, setConsultas 
             onChange={handleInputChange}
           >
             <option value="">Selecione um paciente</option>
-            {pacientes.map(paciente => (
-              <option key={paciente.id_paciente} value={paciente.id_paciente}>
-                {paciente.nome}
-              </option>
-            ))}
+            <option value="1">Paciente 1</option>
           </Form.Select>
         </Form.Group>
 

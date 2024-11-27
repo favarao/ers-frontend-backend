@@ -35,7 +35,8 @@ const Consultas = ({ consultas, pacientes, funcionarios, setConsultas}) => {
             return (
               <tr key={consulta.id_consulta}>
               <td>{consulta.id_consulta}</td>
-              <td>{pacientes.find(paciente => paciente.id_paciente == consulta.id_paciente)?.nome || 'Paciente não encontrado'}</td>
+              <td>Paciente 1</td>
+              {/* <td>{pacientes.find(paciente => paciente.id_paciente == consulta.id_paciente)?.nome || 'Paciente não encontrado'}</td> */}
               <td>{funcionarios.find(funcionario => funcionario.id_usuario == consulta.id_usuario_medico)?.nome || 'Funcionário não encontrado'}</td>
               <td>{new Date(data).toLocaleDateString('pt-BR')} as {hora}</td>
               <td>{consulta.motivo}</td>

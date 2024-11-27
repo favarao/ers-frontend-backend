@@ -10,7 +10,9 @@ import Consultas from './pages/consultas/Consultas';
 import FormularioConsultas from './pages/consultas/FormularioConsultas';
 import Home from './pages/Home';
 import ConsultaServico from './services/ConsultaServico';
+import FuncionarioServico from './services/FuncionarioServico';
 const consultaServico = new ConsultaServico();
+const funcionarioServico = new FuncionarioServico();
 
 const App = () => {
 
@@ -21,12 +23,16 @@ const App = () => {
     const consultas = await consultaServico.getConsultas();
     setConsultas(consultas);
   }
+
+  const carregaFuncionarios = async () => {
+    const funcionarios = await funcionarioServico.getFuncionarios();
+    setFuncionarios(funcionarios);
+  }
   // Carregar dados do LocalStorage ao iniciar
   useEffect(() => {
     carregaConsultas();
-    const funcionariosStorage = JSON.parse(localStorage.getItem('funcionarios')) || [];
+    carregaFuncionarios();
     const pacientesStorage = JSON.parse(localStorage.getItem('pacientes')) || [];
-    setFuncionarios(funcionariosStorage);
     setPacientes(pacientesStorage);
   }, []);
 
@@ -40,7 +46,7 @@ const App = () => {
 
           <Route
             path="/funcionarios"
-            element={<Funcionarios funcionarios={funcionarios} setFuncionarios={setFuncionarios}/>}
+            element={<Funcionarios funcionarios={funcionarios} setFuncionarios={setFuncionarios} setConsultas= {setConsultas} />}
           />
           <Route
             path="/funcionarios/formulario/:id"
@@ -67,7 +73,7 @@ const App = () => {
           
           <Route
             path="/consultas"
-            element={<Consultas consultas={consultas} pacientes={pacientes} funcionarios={funcionarios} setConsultas={setConsultas} carregaConsultas={carregaConsultas} />}
+            element={<Consultas consultas={consultas} pacientes={pacientes} funcionarios={funcionarios} setConsultas={setConsultas} />}
           />
           <Route
             path="/consultas/formulario"

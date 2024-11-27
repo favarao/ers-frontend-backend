@@ -1,12 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Table, Button } from 'react-bootstrap';
+import FuncionarioServico from '../../services/FuncionarioServico';
+import ConsultaServico from '../../services/ConsultaServico';
+const funcionarioServico = new FuncionarioServico();
+const consultaServico = new ConsultaServico();
 
-const Funcionarios = ({ funcionarios, setFuncionarios, sincronizarStorage }) => {
+const Funcionarios = ({ funcionarios, setFuncionarios, setConsultas }) => {
   const handleDelete = (id) => {
-    const updatedFuncionarios = funcionarios.filter((func) => func.id_usuario !== id);
-    setFuncionarios(updatedFuncionarios);
-    sincronizarStorage('funcionarios', updatedFuncionarios);
+    funcionarioServico.deleteFuncionario(id).then(() => {
+      funcionarioServico.getFuncionarios().then((funcionarios) => {
+      setFuncionarios(funcionarios);
+      consultaServico.getConsultas().then((consultas) => setConsultas(consultas));
+      });
+    });
   };
 
   return (

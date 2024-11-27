@@ -2,26 +2,42 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Form, Button, Alert } from 'react-bootstrap';
 import InputMask from 'react-input-mask'
+import FuncionarioServico from '../../services/FuncionarioServico';
+const funcionarioServico = new FuncionarioServico();
 
-const FormularioFuncionarios = ({ funcionarios, setFuncionarios, sincronizarStorage }) => {
+const vazio = {
+    id_usuario: '',
+    nome: '',
+    matricula: '',
+    funcao: 'Atendente',
+    habilitacao: 'Aprovada',
+};
+
+const FormularioFuncionarios = ({ funcionarios, setFuncionarios }) => {
     const { id } = useParams();
-    const navigate = useNavigate();
-    const [form, setForm] = useState({
-        id_usuario: '',
-        nome: '',
-        matricula: '',
-        funcao: 'Atendente',
-        habilitacao: 'Aprovada',
-    });
+
+    const [form, setForm] = useState(vazio);
 
     useEffect(() => {
-        if (id) {
-            const funcionarioExistente = funcionarios.find(funcionario => funcionario.id_usuario === parseInt(id));
-            if (funcionarioExistente) {
-                setForm(funcionarioExistente);
+        const carregarFuncionario = async () => {
+            if (id) {
+                try {
+                    const funcionario = await funcionarioServico.getFuncionario(id);
+                    if (funcionario) {
+                        setForm(funcionario);
+                    } else {
+                        console.warn('Funcionário não encontrado para o ID:', id);
+                    }
+                } catch (error) {
+                    console.error('Erro ao buscar funcionário:', error);
+                }
             }
-        }
-    }, [id, funcionarios]);
+        };
+        carregarFuncionario();
+    }, [id]);
+
+
+    const navigate = useNavigate();
 
     const [error, setError] = useState('');
 
@@ -48,25 +64,16 @@ const FormularioFuncionarios = ({ funcionarios, setFuncionarios, sincronizarStor
         // Validando o formulário antes de submeter
         if (!validateForm()) return;
 
-        if (form.id_usuario !== '') {
-            const index = funcionarios.findIndex(funcionario => funcionario.id_usuario === form.id_usuario);
-            if (index !== -1) {
-                funcionarios[index] = form;
-                setFuncionarios([...funcionarios]);
-                sincronizarStorage('funcionarios', funcionarios);
-            }
+        if(form.id_usuario){
+            funcionarioServico.updateFuncionario(form).then(() => {
+                funcionarioServico.getFuncionarios().then((funcionarios) => setFuncionarios(funcionarios));
+            });
+        } else {
+            funcionarioServico.createFuncionario(form).then(() => {
+                funcionarioServico.getFuncionarios().then((funcionarios) => setFuncionarios(funcionarios));
+            });
         }
-        else {
-            form.id_usuario = funcionarios.length + 1; // Gerar um ID único baseado na quantidade de consultas
-            const novoFuncionario = {
-                ...form
-            };
 
-
-            const novosFuncionarios = [...funcionarios, novoFuncionario];
-        setFuncionarios(novosFuncionarios);
-        sincronizarStorage('funcionarios', novosFuncionarios); // Sincroniza com o LocalStorage
-        }
 
         navigate('/funcionarios');
     };

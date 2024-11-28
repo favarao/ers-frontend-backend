@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Form, Button, Alert } from 'react-bootstrap';
-import InputMask from 'react-input-mask'
+import { Form, Button, Alert, FormControl } from 'react-bootstrap';
+import InputMask from 'react-input-mask';
+import PacienteServico from '../../services/PacienteServico';
+const pacienteServico = new PacienteServico();
 
 const FormularioPacientes = ({ pacientes, setPacientes, sincronizarStorage }) => {
     const { id } = useParams();
@@ -18,13 +20,22 @@ const FormularioPacientes = ({ pacientes, setPacientes, sincronizarStorage }) =>
     });
 
     useEffect(() => {
-        if (id) {
-            const pacienteExistente = pacientes.find(paciente => paciente.id_paciente === parseInt(id));
-            if (pacienteExistente) {
-                setForm(pacienteExistente);
+        const carregarPaciente = async () => {
+            if (id) {
+                try {
+                    const paciente = await pacienteServico.getPaciente(id)
+                    if (paciente) {
+                        setForm(paciente);
+                    } else {
+                        console.warn('Paciente não encontrado para o ID:', id)
+                    }
+                } catch (error) {
+                    console.error('Erro ao buscar paciente:', error);
+                }
             }
         }
-    }, [id, pacientes]);
+        carregarPaciente()
+    }, [id]);
 
     const [error, setError] = useState('');
 
@@ -51,24 +62,14 @@ const FormularioPacientes = ({ pacientes, setPacientes, sincronizarStorage }) =>
         // Validando o formulário antes de submeter
         if (!validateForm()) return;
 
-        if (form.id_paciente !== '') {
-            const index = pacientes.findIndex(paciente => paciente.id_paciente === form.id_paciente);
-            if (index !== -1) {
-                pacientes[index] = form;
-                setPacientes([...pacientes]);
-                sincronizarStorage('pacientes', pacientes);
-            }
-        }
-        else {
-            form.id_paciente = pacientes.length + 1; // Gerar um ID único baseado na quantidade de consultas
-            const novoPaciente = {
-                ...form
-            };
-
-
-            const novosPacientes = [...pacientes, novoPaciente];
-        setPacientes(novosPacientes);
-        sincronizarStorage('pacientes', novosPacientes); // Sincroniza com o LocalStorage
+        if (form.id_paciente) {
+            pacienteServico.updatePaciente(form).then(()=> {
+                pacienteServico.getPacientes().then((pacientes)=> setPacientes(pacientes))
+            })
+        } else {
+            pacienteServico.createPaciente(form).then(() => {
+                pacienteServico.getPacientes().then((pacientes) => setPacientes(pacientes))
+            })
         }
 
         navigate('/pacientes');

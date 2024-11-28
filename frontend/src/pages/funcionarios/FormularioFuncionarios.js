@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Form, Button, Alert } from 'react-bootstrap';
-import InputMask from 'react-input-mask'
+import InputMask from 'react-input-mask';
 import FuncionarioServico from '../../services/FuncionarioServico';
 const funcionarioServico = new FuncionarioServico();
 

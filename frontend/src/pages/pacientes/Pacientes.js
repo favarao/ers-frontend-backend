@@ -1,12 +1,19 @@
 import React from 'react';
 import { Table, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import PacienteServico from '../../services/PacienteServico';
+import ConsultaServico from '../../services/ConsultaServico';
+const pacienteServico = new PacienteServico();
+const consultaServico = new ConsultaServico();
 
-const Pacientes = ({ pacientes, setPacientes, sincronizarStorage }) => {
-  const excluirPaciente = (id) => {
-    const novosPacientes = pacientes.filter(paciente => paciente.id_paciente !== id);
-    setPacientes(novosPacientes);
-    // sincronizarStorage('pacientes', novosPacientes); // Sincroniza com o LocalStorage
+const Pacientes = ({ pacientes, setPacientes, setConsultas }) => {
+  const handleDelete = (id) => {
+    pacienteServico.deletePaciente(id).then(() => {
+      pacienteServico.getPacientes().then((paciente) => {
+      setPacientes(paciente);
+      consultaServico.getConsultas().then((consultas) => setConsultas(consultas));
+      });
+    });
   };
 
   return (
@@ -50,7 +57,7 @@ const Pacientes = ({ pacientes, setPacientes, sincronizarStorage }) => {
                 </Button>{' '}
                 <Button
                   variant="danger"
-                  onClick={() => excluirPaciente(paciente.id_paciente)}
+                  onClick={() => handleDelete(paciente.id_paciente)}
                 >
                   Excluir
                 </Button>

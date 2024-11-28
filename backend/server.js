@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const ConsultaRoutes = require('./routes/ConsultaRoutes.js');
 const FuncionarioRoutes = require('./routes/FuncionarioRoutes.js');
+const PacientesRoutes = require('./routes/PacientesRoutes.js');
 
 const app = express();
 const port = 3001;
@@ -11,6 +12,7 @@ app.use(express.json());
 
 app.use('/consulta', ConsultaRoutes);
 app.use('/funcionario', FuncionarioRoutes);
+app.use('/pacientes', PacientesRoutes);
 
 
 

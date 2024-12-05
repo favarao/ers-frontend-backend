@@ -9,7 +9,7 @@ const FormularioPacientes = ({ pacientes, setPacientes, sincronizarStorage }) =>
     const { id } = useParams();
     const navigate = useNavigate();
     const [form, setForm] = useState({
-        id_paciente: '',
+        id_paciente: 0,
         beneficio: '',
         plan_saude: 'SUS',
         nome: '',
@@ -62,28 +62,18 @@ const FormularioPacientes = ({ pacientes, setPacientes, sincronizarStorage }) =>
         // Validando o formulário antes de submeter
         if (!validateForm()) return;
 
-        if (form.id_paciente) {
-            pacienteServico.updatePaciente(form).then(()=> {
-                pacienteServico.getPacientes().then((pacientes)=> setPacientes(pacientes))
+        if (form.id_paciente !== 0) {
+            console.log(form)
+            pacienteServico.updatePaciente(form).then(() => {
+                pacienteServico.getPacientes().then(pacientes => setPacientes(pacientes))
             })
         } else {
             pacienteServico.createPaciente(form).then(() => {
-                pacienteServico.getPacientes().then((pacientes) => setPacientes(pacientes))
+                pacienteServico.getPacientes().then(pacientes => setPacientes(pacientes))
             })
         }
 
         navigate('/pacientes');
-        // Limpa o formulário
-        // setForm({
-        //     id_paciente: '',
-        //     beneficio: '',
-        //     plan_saude: 'SUS',
-        //     nome: '',
-        //     sexo: 'M',
-        //     nasc: '',
-        //     end: '',
-        //     tel: '',
-        // });
     };
 
     return (
@@ -122,25 +112,14 @@ const FormularioPacientes = ({ pacientes, setPacientes, sincronizarStorage }) =>
 
                 <Form.Group className="mb-3" controlId="formNasc">
                     <Form.Label>Nascimento</Form.Label>
-                    <InputMask
-                        mask="99/99/9999"
-                        placeholder="DD/MM/AAAA"
-                        onChange={handleInputChange}
+                    <Form.Control
+                        type="date"
                         name="nasc"
+                        min="1900-12-31"
+                        max="2024-12-31"
                         value={form.nasc}
-                        required
-                    >
-                        {(inputProps) => (
-                            <Form.Control
-                                {...inputProps}
-                                type="text"
-                                isInvalid={false} // Altere para true para exibir um erro
-                            />
-                        )}
-                    </InputMask>
-                    <Form.Control.Feedback type="invalid">
-                        Insira uma data válida.
-                    </Form.Control.Feedback>
+                        onChange={handleInputChange}
+                    />
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="formTel">
@@ -210,7 +189,7 @@ const FormularioPacientes = ({ pacientes, setPacientes, sincronizarStorage }) =>
                     Salvar
                 </Button>
             </Form>
-        </div>
+        </div >
     );
 };
 

@@ -3,7 +3,7 @@ const db = require('../config/db.js');
 class PacienteDAO {
     async inserir(dados) {
         const { beneficio, plan_saude, nome, sexo, nasc, tel, end } = dados;
-        const sql = `INSERT INTO pacientes (id_paciente, beneficio, plan_saude, nome, sexo, nasc, tel, end) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+        const sql = `INSERT INTO pacientes (beneficio, plan_saude, nome, sexo, nasc, tel, end) VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
         const [result] = await db.execute(sql, [beneficio, plan_saude, nome, sexo, nasc, tel, end]);
         return result.insertId;
@@ -27,7 +27,7 @@ class PacienteDAO {
         return result.affectedRows;
     }
 
-    async excluir(id_usuario) {
+    async excluir(id_paciente) {
         const sql = 'DELETE FROM pacientes WHERE id_paciente = ?';
         const [result] = await db.execute(sql, [id_paciente]);
         return result.affectedRows;

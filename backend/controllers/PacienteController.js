@@ -3,7 +3,7 @@ const Paciente = require('../models/Paciente.js');
 class PacienteController {
     async inserir(req, res) {
         try {
-            const { beneficio, plan_saude, nome, sexo, nasc, tel, end } = req.body;
+            const { id_paciente, beneficio, plan_saude, nome, sexo, nasc, tel, end } = req.body;
 
             if (!beneficio || !plan_saude || !nome || !sexo || !nasc || !tel || !end) {
                 return res.status(400).json({ message: 'Todos os campos obrigatórios devem ser preenchidos!' });
@@ -17,7 +17,7 @@ class PacienteController {
                 id: resultado
             });
         } catch (error) {
-            res.status(500).json({ message: 'Erro ao registrar paciente', error: error.message });
+            res.status(500).json({ message: 'Erro ao registrar paciente', error: error });
         }
     }
 
@@ -30,6 +30,7 @@ class PacienteController {
             }
 
             const paciente = new Paciente(id_paciente, beneficio, plan_saude, nome, sexo, nasc, tel, end);
+            
             const resultado = await paciente.atualizar();
 
             res.status(200).json({
@@ -47,7 +48,7 @@ class PacienteController {
             await Paciente.excluir(id);
             res.status(200).json({ message: 'Paciente excluído com sucesso' });
         } catch (error) {
-            res.status(500).json({ message: 'Erro ao excluir Paciente', error: error.message });
+            res.status(500).json({ message: 'Erro ao excluir Paciente', error: error });
         }
     }
 

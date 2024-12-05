@@ -9,16 +9,16 @@ const consultaServico = new ConsultaServico();
 const Pacientes = ({ pacientes, setPacientes, setConsultas }) => {
   const handleDelete = (id) => {
     pacienteServico.deletePaciente(id).then(() => {
-      pacienteServico.getPacientes().then((paciente) => {
-      setPacientes(paciente);
-      consultaServico.getConsultas().then((consultas) => setConsultas(consultas));
+      pacienteServico.getPacientes().then((pacientes) => {
+        setPacientes(pacientes);
+        consultaServico.getConsultas().then((consultas) => setConsultas(consultas));
       });
     });
   };
 
   return (
     <div>
-      <h3>Lista de Pacientes</h3>
+      <h3>Gerenciar Pacientes</h3>
       <Button className='mt-3 mb-3' variant="primary" as={Link} to="/pacientes/formulario">
         Novo Paciente
       </Button>
@@ -37,33 +37,47 @@ const Pacientes = ({ pacientes, setPacientes, setConsultas }) => {
           </tr>
         </thead>
         <tbody>
-          {pacientes.map(paciente => (
-            <tr key={paciente.id_paciente}>
-              <th>{paciente.id_paciente}</th>
-              <th>{paciente.beneficio}</th>
-              <th>{paciente.plan_saude}</th>
-              <th>{paciente.nome}</th>
-              <th>{paciente.sexo}</th>
-              <th>{paciente.nasc}</th>
-              <th>{paciente.tel}</th>
-              <th>{paciente.end}</th>
-              <td>
-                <Button
-                  variant="warning"
-                  as={Link}
-                  to={`/pacientes/formulario/${paciente.id_paciente}`}
-                >
-                  Editar
-                </Button>{' '}
-                <Button
-                  variant="danger"
-                  onClick={() => handleDelete(paciente.id_paciente)}
-                >
-                  Excluir
-                </Button>
+          {pacientes.length === 0 ? (
+            <tr>
+              <td colSpan="5" className='text-center'>
+                Nenhum Paciente cadastrado.
               </td>
             </tr>
-          ))}
+          ) : (
+
+            pacientes.map(paciente => {
+              // const [data, hora] = paciente.nasc.split('T');
+              return (
+              <tr key={paciente.id_paciente}>
+                <td>{paciente.id_paciente}</td>
+                <td>{paciente.beneficio}</td>
+                <td>{paciente.plan_saude}</td>
+                <td>{paciente.nome}</td>
+                <td>{paciente.sexo}</td>
+                <td>
+                  {paciente.nasc}
+                  {/* {new Date(data).toLocaleDateString('pt-BR')} as {hora} */}
+                  </td>
+                <td>{paciente.tel}</td>
+                <td>{paciente.end}</td>
+                <td>
+                  <Button
+                    variant="warning"
+                    as={Link}
+                    to={`/pacientes/formulario/${paciente.id_paciente}`}
+                  >
+                    Editar
+                  </Button>{' '}
+                  <Button
+                    variant="danger"
+                    onClick={() => handleDelete(paciente.id_paciente)}
+                  >
+                    Excluir
+                  </Button>
+                </td>
+              </tr>
+            )})
+          )}
         </tbody>
       </Table>
     </div >

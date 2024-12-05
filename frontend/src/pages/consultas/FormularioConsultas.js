@@ -119,7 +119,11 @@ const FormularioConsultas = ({ consultas, pacientes, funcionarios, setConsultas 
             onChange={handleInputChange}
           >
             <option value="">Selecione um paciente</option>
-            <option value="1">Paciente 1</option>
+            {pacientes.map(paciente => (
+              <option key={paciente.id_paciente} value={paciente.id_paciente}>
+                {paciente.nome}
+              </option>
+            ))}
           </Form.Select>
         </Form.Group>
 

@@ -26,6 +26,12 @@ class FuncionarioDAO {
         return result.affectedRows;
     }
 
+    async buscarPorTermo(termo) {
+        const sql = 'SELECT * FROM usuarios WHERE nome LIKE ?';
+        const [rows] = await db.execute(sql, [`%${termo}%`]);
+        return rows; 
+    }
+
     async buscar(id_usuario = null) {
         let sql, params;
         if (id_usuario) {

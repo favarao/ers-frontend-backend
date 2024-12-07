@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState } from 'react';
 import { Table, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import PacienteServico from '../../services/PacienteServico';
@@ -7,6 +8,7 @@ const pacienteServico = new PacienteServico();
 const consultaServico = new ConsultaServico();
 
 const Pacientes = ({ pacientes, setPacientes, setConsultas }) => {
+  const [search, setSearch] = useState("");
   const handleDelete = (id) => {
     pacienteServico.deletePaciente(id).then(() => {
       pacienteServico.getPacientes().then((pacientes) => {
@@ -16,12 +18,35 @@ const Pacientes = ({ pacientes, setPacientes, setConsultas }) => {
     });
   };
 
+  const buscarPacientes = (termo) => {
+    if(termo!=='') {
+      pacienteServico.getPacientePorTermo(termo).then((pacientes) => setPacientes(pacientes));
+    }
+    else
+    {
+      pacienteServico.getPacientePorTermo().then((pacientes) => setPacientes(pacientes));
+    }
+  };
+
   return (
     <div>
       <h3>Gerenciar Pacientes</h3>
       <Button className='mt-3 mb-3' variant="primary" as={Link} to="/pacientes/formulario">
         Novo Paciente
       </Button>
+
+      <input
+        style={{ maxWidth: '400px', marginBottom: '10px' }}
+        type="text"
+        placeholder="Buscar pacientes"
+        className="form-control"
+        value={search}
+        onChange={(e) => {
+          setSearch(e.target.value);
+          buscarPacientes(e.target.value);
+        }}
+
+      />
       <Table striped bordered hover responsive>
         <thead>
           <tr>

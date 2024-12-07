@@ -6,6 +6,7 @@ router.post('/', PacienteController.inserir);
 router.put('/', PacienteController.atualizar);
 router.get('/:id', PacienteController.buscarPorId);
 router.get('/', PacienteController.listar);
+router.get('/termo/:termo', PacienteController.buscarPorTermo);
 router.delete('/:id', PacienteController.excluir);
 
 module.exports = router;

@@ -124,6 +124,11 @@ class Paciente {
         return new Paciente(row.id_paciente, row.beneficio, row.plan_saude, row.nome, row.sexo, row.nasc, row.tel, row.end);
     }
 
+    static async buscarPorTermo(termo) {
+        const rows = await PacienteDAO.buscarPorTermo(termo);
+        return rows.map(row => new Paciente(row.id_paciente, row.beneficio, row.plan_saude, row.nome, row.sexo, row.nasc, row.tel, row.end));
+    }
+
     static async listar() {
         const rows = await PacienteDAO.buscar();
         return rows.map(row => new Paciente(row.id_paciente, row.beneficio, row.plan_saude, row.nome, row.sexo, row.nasc, row.tel, row.end));

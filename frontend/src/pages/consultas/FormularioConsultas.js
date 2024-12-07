@@ -35,10 +35,10 @@ const FormularioConsultas = ({ consultas, pacientes, funcionarios, setConsultas 
 
             setForm(consulta);
           } else {
-            console.warn('Consulta não encontrada para o ID:', id);
+            console.warn('Consultao encontrada para o ID:', id);
           }
         } catch (error) {
-          console.error('Erro ao buscar consulta:', error);
+          console.error('Erro ao bar consulta:', error);
         }
       }
     };
@@ -67,18 +67,18 @@ const FormularioConsultas = ({ consultas, pacientes, funcionarios, setConsultas 
 
     const dataAgendamento = new Date(form.data_agendamento.split('/').reverse().join('-'));
     const dataHoraConsulta = new Date(form.data_hora_consulta.slice(0, 16).split('T')[0]);
-
+    //Validar datas
     if (isNaN(dataAgendamento.getTime()) || isNaN(dataHoraConsulta.getTime())) {
       setError('Datas inválidas! Verifique o formato das datas.');
       return false;
     }
-
+    //Validar se a data de agendamento é menor que a data e hora da consulta
     if (dataAgendamento >= dataHoraConsulta) {
       setError('A data de agendamento deve ser menor que a data e hora da consulta!');
       return false;
     }
 
-    
+    //Formatar a data de agendamento para o formato aceito pelo banco de dados
     form.data_agendamento = form.data_agendamento.split('/').reverse().join('-');
     form.id_usuario_agendador = form.id_usuario_medico;
     setError('');

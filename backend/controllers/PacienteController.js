@@ -67,6 +67,16 @@ class PacienteController {
         }
     }
 
+    async buscarPorTermo(req, res) {
+        try {
+            const { termo } = req.params;
+            const pacientes = await Paciente.buscarPorTermo(termo);
+            res.status(200).json(pacientes.map(paci => paci.toJSON()));
+        } catch (error) {
+            res.status(500).json({ message: 'Erro ao buscar pacientes', error: error.message });
+        }
+    }
+
     async listar(req, res) {
         try {
             const pacientes = await Paciente.listar();

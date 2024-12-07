@@ -64,6 +64,11 @@ class Funcionario {
         return new Funcionario(row.id_usuario, row.nome, row.matricula, row.funcao, row.habilitacao);
     }
 
+    static async buscarPorTermo(termo) {
+        const rows = await FuncionarioDAO.buscarPorTermo(termo);
+        return rows.map(row => new Funcionario(row.id_usuario, row.nome, row.matricula, row.funcao, row.habilitacao));
+    }
+
     static async listar() {
         const rows = await FuncionarioDAO.buscar();
         return rows.map(row => new Funcionario(row.id_usuario, row.nome, row.matricula, row.funcao, row.habilitacao));

@@ -45,6 +45,12 @@ class PacienteDAO {
         const [rows] = await db.execute(sql, params);
         return rows;
     }
+
+    async buscarPorTermo(termo) {
+        const sql = 'SELECT * FROM pacientes WHERE nome LIKE ?';
+        const [rows] = await db.execute(sql, [`%${termo}%`]);
+        return rows;
+    }
 }
 
 module.exports = new PacienteDAO();

@@ -29,6 +29,20 @@ class FuncionarioServico {
         return dados;
     }
 
+    async getFuncionarioPorTermo(termo) {
+        const response = await fetch(`${API_BASE_URL}/funcionario/termo/${termo}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Erro ao buscar funcionários');
+        }
+        const dados = await response.json();
+        return dados;
+    }
+
     async deleteFuncionario(id) {
         const response = await fetch(`${API_BASE_URL}/funcionario/${id}`, {
             method: 'DELETE',

@@ -66,6 +66,16 @@ class FuncionarioController {
         }
     }
 
+    async buscarPorTermo(req, res) {
+        try {
+            const { termo } = req.params;
+            const funcionarios = await Funcionario.buscarPorTermo(termo);
+            res.status(200).json(funcionarios.map(func => func.toJSON()));
+        } catch (error) {
+            res.status(500).json({ message: 'Erro ao buscar funcionários', error: error.message });
+        }
+    }
+
     async listar(req, res) {
         try {
             const funcionarios = await Funcionario.listar();

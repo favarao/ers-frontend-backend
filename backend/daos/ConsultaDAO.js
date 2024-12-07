@@ -84,6 +84,13 @@ class ConsultaDAO {
         return result.affectedRows; 
     }
 
+    async buscarPorTermo(termo) {
+        const sql = `SELECT * FROM consultas c inner join pacientes p on c.id_paciente = p.id_paciente inner join usuarios u on c.id_usuario_medico = u.id_usuario
+            WHERE p.nome LIKE ? OR u.nome LIKE ? OR c.motivo LIKE ? OR c.status LIKE ?`;
+        const [rows] = await db.execute(sql, [`%${termo}%`, `%${termo}%`, `%${termo}%`, `%${termo}%`]);
+        return rows; 
+    }
+
     async buscar(id_consulta = null) {
         let sql, params;
         if (id_consulta) {

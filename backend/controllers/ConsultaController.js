@@ -28,7 +28,6 @@ class ConsultaController {
     async atualizar(req, res) {
         try{
             const{id_consulta, id_paciente, id_tipo_consulta, id_usuario_agendador, id_usuario_medico, data_hora_consulta, data_agendamento, motivo, status} = req.body;
-            
             if(!id_paciente || !id_tipo_consulta || !id_usuario_agendador || !id_usuario_medico || !data_hora_consulta || !data_agendamento || !motivo || !status)
                 return res.status(400).json({ message: 'Campos obrigatórios não preenchidos' });
 
@@ -84,6 +83,19 @@ class ConsultaController {
         } catch (error) {
             res.status(500).json({ 
                 message: 'Erro ao listar consultas',
+                error: error.message
+            });
+        }
+    }
+
+    async buscarPorTermo(req, res) {
+        try {
+            const { termo } = req.params;
+            const consultas = await Consulta.buscarPorTermo(termo);
+            res.status(200).json(consultas.map(consulta => consulta.toJSON()));
+        } catch (error) {
+            res.status(500).json({ 
+                message: 'Erro ao buscar consultas',
                 error: error.message
             });
         }

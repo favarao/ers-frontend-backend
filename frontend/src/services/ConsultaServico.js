@@ -17,6 +17,22 @@ class ConsultaServico{
         return dados;
     }
 
+    async getConsultaPorTermo(termo){
+        const response = await fetch(`${API_BASE_URL}/consulta/termo/${termo}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+        if(!response.ok){
+            throw new Error('Erro ao buscar consultas');
+        }
+        const dados = await response.json();
+        return dados;
+    }
+
     async getConsulta(id){
         const response = await fetch(`${API_BASE_URL}/consulta/${id}`,
             {

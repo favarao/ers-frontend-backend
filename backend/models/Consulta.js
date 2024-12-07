@@ -136,6 +136,11 @@ class Consulta {
         return consulta;
     }
 
+    static async buscarPorTermo(termo) {
+        const rows = await ConsultaDAO.buscarPorTermo(termo);
+        return rows.map(row => new Consulta(row.id_consulta, row.id_paciente, row.id_tipo_consulta, row.id_usuario_agendador, row.id_usuario_medico, row.data_hora_consulta, row.data_agendamento, row.motivo, row.status));
+    }
+
     static async listar() {
         const rows = await ConsultaDAO.buscar();
         return rows.map(row => new Consulta(row.id_consulta, row.id_paciente, row.id_tipo_consulta, row.id_usuario_agendador, row.id_usuario_medico, row.data_hora_consulta, row.data_agendamento, row.motivo, row.status));

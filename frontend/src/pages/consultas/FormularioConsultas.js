@@ -30,8 +30,8 @@ const FormularioConsultas = ({ consultas, pacientes, funcionarios, setConsultas 
           const consulta = await consultaServico.getConsulta(id);
           if (consulta) {
             
-            consulta.data_hora_consulta = consulta.data_hora_consulta.slice(0, 16);
-            consulta.data_agendamento = new Date(consulta.data_agendamento).toLocaleDateString('pt-BR');
+            consulta.data_hora_consulta = consulta.data_hora_consulta.slice(0, 16)
+            consulta.data_agendamento = consulta.data_agendamento.slice(0,10).split('-').reverse().join('/');
 
             setForm(consulta);
           } else {
@@ -64,6 +64,21 @@ const FormularioConsultas = ({ consultas, pacientes, funcionarios, setConsultas 
       setError('Todos os campos obrigatórios devem ser preenchidos!');
       return false;
     }
+
+    const dataAgendamento = new Date(form.data_agendamento.split('/').reverse().join('-'));
+    const dataHoraConsulta = new Date(form.data_hora_consulta.slice(0, 16).split('T')[0]);
+
+    if (isNaN(dataAgendamento.getTime()) || isNaN(dataHoraConsulta.getTime())) {
+      setError('Datas inválidas! Verifique o formato das datas.');
+      return false;
+    }
+
+    if (dataAgendamento >= dataHoraConsulta) {
+      setError('A data de agendamento deve ser menor que a data e hora da consulta!');
+      return false;
+    }
+
+    
     form.data_agendamento = form.data_agendamento.split('/').reverse().join('-');
     form.id_usuario_agendador = form.id_usuario_medico;
     setError('');
